@@ -1,8 +1,12 @@
-import mysql.connector 
+import os
+import mysql.connector
+
 db = mysql.connector.connect(
-    host="localhost",
-    user = "root",
-    password = "",
-    database = "kids"
+    host=os.getenv("MYSQLHOST"),
+    user=os.getenv("MYSQLUSER"),
+    password=os.getenv("MYSQLPASSWORD"),
+    database=os.getenv("MYSQLDATABASE"),
+    port=int(os.getenv("MYSQLPORT")),
 )
-print("Database connect!")
+
+cursor = db.cursor()

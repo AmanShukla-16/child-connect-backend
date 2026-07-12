@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Vendor, Booking, Parent, LoginParent
-import mysql.connector
-
+from db import db, cursor
 app = FastAPI()
 
 app.add_middleware(
@@ -12,15 +11,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="kids"
-)
-
-cursor = db.cursor()
 
 @app.get("/")
 def home():
