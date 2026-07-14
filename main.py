@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models import Vendor, Booking, Parent, LoginParent
-from db import db, cursor
+from db import reconnect
 app = FastAPI()
 
 app.add_middleware(
@@ -18,6 +18,8 @@ def home():
 
 @app.post("/add_vendor")
 def add_vendor(vendor: Vendor):
+
+    db, cursor = reconnect()
 
     sql = """
     INSERT INTO vendors
@@ -60,6 +62,8 @@ def add_vendor(vendor: Vendor):
 @app.post("/book_vendor")
 def book_vendor(booking: Booking):
 
+    db, cursor = reconnect()
+
     sql = """
     INSERT INTO bookings
     (parent_name, parent_phone, vendor_id, vendor_name, booking_date, batch_time)
@@ -81,6 +85,8 @@ def book_vendor(booking: Booking):
     return {"message": "Booking Successful"}
 @app.post("/register_parent")
 def register_parent(parent: Parent):
+
+    db, cursor = reconnect()
 
     # Check if email already exists
     cursor.execute(
@@ -120,6 +126,8 @@ def register_parent(parent: Parent):
 @app.post("/login_parent")
 def login_parent(parent: LoginParent):
 
+    db, cursor = reconnect()
+
     cursor.execute(
         "SELECT * FROM parents WHERE email=%s AND password=%s",
         (parent.email, parent.password)
@@ -144,6 +152,8 @@ def login_parent(parent: LoginParent):
 
 @app.get("/vendors")
 def get_vendors():
+
+    db, cursor = reconnect()
 
     cursor.execute("SELECT * FROM vendors")
     rows = cursor.fetchall()
@@ -171,6 +181,8 @@ def get_vendors():
 @app.get("/bookings")
 def get_bookings():
 
+    db, cursor = reconnect()
+
     cursor.execute("SELECT * FROM bookings")
     rows = cursor.fetchall()
 
@@ -192,6 +204,8 @@ def get_bookings():
 
 @app.get("/vendors/{category}")
 def get_vendors_by_category(category: str):
+
+    db, cursor = reconnect()
 
     sql = "SELECT * FROM vendors WHERE category = %s"
     cursor.execute(sql, (category,))
